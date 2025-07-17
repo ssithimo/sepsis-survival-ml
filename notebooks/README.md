@@ -36,11 +36,22 @@ This notebook walks through the complete process of predicting survival outcomes
 
 ---
 
-## ✅ Requirements
+## How to run
 
-- Python 3.7+
-- `pandas`, `numpy`, `scikit-learn`, `matplotlib`, `seaborn`, `shap` (optional)
+### Clone the repository:
 
-To install dependencies:
 ```bash
-pip install -r ../requirements.txt
+git clone https://github.com/ssithimo/sepsis-survival-ml.git
+cd sepsis-survival-ml
+```
+
+### Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+### Run the notebook:
+```bash
+jupyter notebook notebooks/sepsis_survival.ipynb
+```
