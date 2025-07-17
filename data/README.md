@@ -1,6 +1,6 @@
 # Data Description 📊
 
-This folder contains the dataset used for the Sepsis Survival Project.
+This folder contains the dataset used for the Sepsis Survival Prediction Project.
 
 ---
 
