@@ -12,4 +12,4 @@ The report includes:
 - Ethical concerns
 - Final conclusion
 
-📄 View the report: [Sepsis Survival ML Report.pdf](report/sepsis-survival-ml-report.pdf)
+📄 View the report: [Sepsis Survival ML Report.pdf](https://github.com/ssithimo/sepsis-survival-ml/blob/main/report/sepsis-survival-ml-report.pdf)
