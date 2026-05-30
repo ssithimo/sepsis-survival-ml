@@ -6,7 +6,7 @@
 
 ## 🧩 Clinical & Business Context
 
-Sepsis is a life-threatening organ dysfunction caused by the body's extreme response to infection. It is one of the most expensive conditions treated in hospitals — the average sepsis hospitalization costs $18,000 to $24,000, and severe cases requiring ICU admission can exceed $100,000.
+Sepsis is one of the most expensive conditions treated in U.S. hospitals. According to the Agency for Healthcare Research and Quality (AHRQ Statistical Brief #306, April 2024), the average cost of a sepsis hospitalization rose 17.1% from 2016 to 2019, reaching $28,800 per stay by 2021. Severe cases requiring ICU admission cost significantly more.
 
 Two types of prediction errors carry very different costs in this 
 context:
@@ -110,5 +110,11 @@ Age and length of stay together account for **72% of predictive importance**, id
    - the model was trained on 2011 to 2012 Norwegian hospital data. Generalizability to other healthcare systems, patient populations, or treatment protocols       requires validation on independent datasets before clinical deployment.
 
 ---
+
+## 📚 References
+- Agency for Healthcare Research and Quality. (April 2024). 
+  *Statistical Brief #306: Sepsis Hospitalizations and Costs, 
+  2016–2021*. Healthcare Cost and Utilization Project (HCUP).
+  https://hcup-us.ahrq.gov
 
 ## 📁 File Structure
