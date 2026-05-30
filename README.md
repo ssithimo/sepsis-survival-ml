@@ -117,4 +117,22 @@ Age and length of stay together account for **72% of predictive importance**, id
   2016–2021*. Healthcare Cost and Utilization Project (HCUP).
   https://hcup-us.ahrq.gov
 
+---
+
 ## 📁 File Structure
+
+sepsis-survival-ml/
+├── data/
+│   └── SepsisDataset.csv
+├── notebooks/
+│   └── sepsis_survival_prediction.ipynb
+├── report/
+│   └── sepsis_survival_report.pdf
+├── requirements.txt
+└── README.md
+
+---
+
+## 🔧 Tools
+Python, scikit-learn, Pandas, NumPy, SHAP, 
+Matplotlib, Seaborn
