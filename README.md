@@ -1,82 +1,114 @@
-# Sepsis Survival Prediction Project 🏥🩺
+# 🏥 Sepsis Survival Prediction — Norwegian Hospital Data
 
-## Project Overview
-
-Sepsis is a critical medical condition caused by the body's extreme response to infection, leading to life-threatening organ dysfunction. It accounts for significant mortality worldwide and requires rapid diagnosis and intervention to improve patient outcomes.
-
-This project analyzes a large clinical dataset from Norwegian hospitals (110,000+ patient records collected between 2011-2012) to build predictive models that estimate patient survival after sepsis-related hospitalization. Timely and accurate survival prediction can help healthcare providers optimize resource allocation, prioritize intensive care for high-risk patients, and potentially save lives.
+> *Sepsis affects 1.7 million Americans annually and carries a 15-30% mortality rate. Early identification of high-risk patients is the single most effective intervention available. This project builds a machine learning pipeline to predict hospital survival outcomes from clinical data — prioritizing recall to minimize the cost of missing a high-risk patient.*
 
 ---
 
-## 🔧 Technologies Used
+## 🧩 Clinical & Business Context
 
-- Python  
-- scikit-learn  
-- Pandas & NumPy  
-- Matplotlib & Seaborn  
-- SHAP (Explainable AI)
+Sepsis is a life-threatening organ dysfunction caused by the body's extreme response to infection. It is one of the most expensive conditions treated in hospitals — the average sepsis hospitalization costs $18,000 to $24,000, and severe cases requiring ICU admission can exceed $100,000.
+
+Two types of prediction errors carry very different costs in this 
+context:
+
+- **False negative** — model predicts survival, patient dies. Missed intervention opportunity, preventable death, liability risk
+- **False positive** — model predicts non-survival, patient survives. Unnecessary ICU escalation, additional monitoring costs
+
+In sepsis prediction, false negatives are far more costly than false positives. A missed high-risk patient loses the window for early intervention. An over-flagged patient receives additional monitoring that, while unnecessary, does no harm. This asymmetry drives all modeling decisions in this project because **recall is the primary evaluation metric.**
 
 ---
 
 ## 📊 Dataset
 
-- **Source**: De-identified hospital data from Norwegian patients (2011–2012)  
-- **Records**: 110,204 unique patient episodes  
-- **Target Variable**: Hospital outcome (0 = survived, 1 = deceased)  
-- **Key Features**:
-  - Age  
-  - Sex  
-  - Length of stay  
-  - Number of sepsis episodes  
-  - Number of ICD-10 diagnoses  
-
-After cleaning, 18 rows with missing ICD codes were removed.
+- **Source:** De-identified hospital data, Norwegian patients (2011 to 2012)
+- **Records:** 110,204 unique patient episodes
+- **Target:** Hospital outcome (0 = survived, 1 = deceased)
+- **Features:** Age, sex, length of stay, number of sepsis episodes, number of ICD-10 diagnoses
+- **Preprocessing:** 18 rows with missing ICD codes removed
 
 ---
 
-## 🧠 Models Used
+## 🔍 Modeling Approach
 
-We tested and compared the following classifiers:
+Five classifier families were evaluated with and without class weighting to assess the tradeoff between accuracy and recall:
 
-- Logistic Regression  
-- Decision Tree  
-- Random Forest  
-- Bagging Classifier (with decision trees)  
+- Logistic Regression
+- Decision Tree
+- Random Forest
+- Bagging Classifier
 - Feedforward Neural Network
 
----
-
-## ⚙️ Performance Summary
-
-| Model                 | Accuracy | Recall | F1 Score |
-|----------------------|----------|--------|----------|
-| Logistic Regression  | 0.78     | 0.63   | 0.65     |
-| Decision Tree        | 0.76     | 0.68   | 0.66     |
-| **Bagging Classifier** | **0.80** | **0.72** | **0.70** |
-| Neural Network        | 0.77     | 0.60   | 0.61     |
-
-- **Best model**: **Bagging Classifier** tuned to prioritize recall  
-- **Key predictors**: Age and Length of Stay were the most important features  
-- **Interpretability**: Tree-based models provided feature importance; future work includes SHAP integration for transparency
+Class-weighted variants were tested to assess whether sacrificing accuracy for higher recall was necessary. The tuned unweighted models demonstrated that high recall and high accuracy are achievable simultaneously where weighted variants were ultimately unnecessary.
 
 ---
 
-## 🔬 Key Findings
+## 📈 Model Performance (Validation Set)
 
-- Patients aged **65+** had significantly higher mortality risk  
-- **Longer hospital stays** were associated with non-survival, likely due to complications  
-- The best-performing model achieved **72% recall**, minimizing false negatives — a critical goal in sepsis management
+| Model | Accuracy | Recall | Precision | F1 |
+|-------|----------|--------|-----------|-----|
+| Logistic Regression | 92.62% | 92.62% | 88.55% | 89.27% |
+| Decision Tree Tuned | 92.85% | 92.85% | 90.84% | 90.01% |
+| Random Forest | 91.82% | 91.82% | 88.76% | 89.83% |
+| Bagging Classifier | 91.58% | 91.58% | 88.59% | 89.71% |
+| **Bagging Estimator Tuned** | **92.72%** | **92.72%** | **90.06%** | **89.92%** |
+| Neural Network | 64.21% | 64.21% | 91.18% | 72.75% |
+
+---
+
+## ✅ Model Selection: Bagging Estimator Tuned
+
+The Tuned Bagging Estimator was selected as the final model based on three criteria:
+
+1. **Highest combined performance**
+
+   - 92.72% accuracy and recall on the validation set, while 93.76% on training. Strong on both sets across all four metrics.
+
+3. **Minimal overfitting**
+
+   - the Tuned Bagging Estimator showed a 1.04% gap between training and validation accuracy, small enough to confirm the model generalizes well to new patients rather than memorizing the training data. Random Forest had a larger 3.14% gap, a sign of more overfitting. The Tuned Decision Tree is the one outlier worth noting. Its validation accuracy was actually slightly higher than its training accuracy, which almost never happens naturally. When a model performs better on data it has never seen than on data it was trained on, it usually means something went wrong in how the data was split rather than the model being genuinely that good. We treated it as a red flag and excluded it from final consideration despite its strong numbers. Lastly, the neural network, although having a near zero gap between training and validation, it performed a lot worse and didn't learn much at all, indicative of underfitting.
+
+5. **Recall priority**
+
+   - at 92.72% recall the model correctly identifies 92.72% of patients who will not survive, minimizing the higher-cost false negative error in a clinical setting.
+
+---
+
+## 🧠 SHAP Explainability
+
+SHAP analysis was conducted on the default Bagging Classifier as an interpretability proxy for the tuned model. The tuned variant's randomized feature sampling introduces instability in SHAP attribution scores, making the default classifier a more appropriate vehicle for explaining feature importance while the tuned model handles prediction.
+
+**Feature importance scores:**
+
+| Feature | SHAP Importance |
+|---------|----------------|
+| Age | 0.38 |
+| Length of Stay | 0.34 |
+| Episode Number | 0.11 |
+| Number of Medical Conditions | 0.10 |
+| Sex | 0.07 |
+
+Age and length of stay together account for **72% of predictive importance**, identifying them as the two primary clinical risk indicators for sepsis mortality. These findings align with established clinical literature on sepsis outcomes and provide a transparent, defensible basis for the model's predictions in a healthcare setting.
 
 ---
 
 ## ⚖️ Ethical & Clinical Considerations
 
-- Optimizing **recall** helps avoid underestimating patient risk  
-- Transparency is vital: interpretable models can build trust in clinical settings  
-- Dataset was fully anonymized and complies with ethical handling of healthcare data
+1. **Recall optimization**
+
+   - false negatives carry higher clinical and ethical cost than false positives in sepsis prediction. All modeling decisions prioritize minimizing missed high     risk patients over overall accuracy.
+
+2. **Interpretability**
+
+   - SHAP analysis ensures clinicians can understand and audit model predictions, supporting trust and adoption in clinical decision support contexts.
+
+3. **Data handling**
+
+   - dataset was fully anonymized and sourced from de-identified Norwegian hospital records compliant with ethical research standards.
+
+4. **Limitations**
+
+   - the model was trained on 2011 to 2012 Norwegian hospital data. Generalizability to other healthcare systems, patient populations, or treatment protocols       requires validation on independent datasets before clinical deployment.
 
 ---
 
-## 📬 Contact
-
-Feel free to reach out if you have questions or suggestions!
+## 📁 File Structure
