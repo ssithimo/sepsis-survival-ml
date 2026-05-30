@@ -119,20 +119,6 @@ Age and length of stay together account for **72% of predictive importance**, id
 
 ---
 
-## 📁 File Structure
-
-sepsis-survival-ml/
-├── data/
-│   └── SepsisDataset.csv
-├── notebooks/
-│   └── sepsis_survival_prediction.ipynb
-├── report/
-│   └── sepsis_survival_report.pdf
-├── requirements.txt
-└── README.md
-
----
-
 ## 🔧 Tools
 Python, scikit-learn, Pandas, NumPy, SHAP, 
 Matplotlib, Seaborn
